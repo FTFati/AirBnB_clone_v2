@@ -8,6 +8,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
+
 class BaseModel:
     """A base class for all hbnb models"""
 
@@ -43,7 +44,6 @@ class BaseModel:
         storage.new(self)
         storage.save()
 
-
     def to_dict(self):
         """Convert instance into dict format"""
         dictionary = {}
@@ -55,7 +55,7 @@ class BaseModel:
         if '_sa_instance_state' in dictionary:
             del dictionary['_sa_instance_state']
         return dictionary
-    
+
     def delete(self):
         from models import storage
         storage.delete(self)
