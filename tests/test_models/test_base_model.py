@@ -1,83 +1,99 @@
 #!/usr/bin/python3
-"""Unittest test_base_model module"""
-
-from datetime import datetime
+""" """
 from models.base_model import BaseModel
 import unittest
-from time import sleep
-import pycodestyle
+import datetime
+from uuid import UUID
+import json
+import os
 
 
-class TestBaseModel(unittest.TestCase):
-    """Test cases for the BaseModel class"""
+class test_basemodel(unittest.TestCase):
+    """ """
 
-    def test_pycodestyle(self):
-        """Test that the code follows pycodestyle guidelines"""
-        style = pycodestyle.StyleGuide(quiet=True)
-        result = style.check_files(['models/base_model.py'])
-        self.assertEqual(result.total_errors, 0,
-                         "Found code style errors (and warnings).")
+    def __init__(self, *args, **kwargs):
+        """ """
+        super().__init__(*args, **kwargs)
+        self.name = 'BaseModel'
+        self.value = BaseModel
 
-    def test_module_docstring(self):
-        """Test that the module has a docstring"""
-        import models.base_model
-        self.assertIsNotNone(models.base_model.__doc__)
+    def setUp(self):
+        """ """
+        pass
 
-    def test_class_docstring(self):
-        """Test that the class has a docstring"""
-        self.assertIsNotNone(BaseModel.__doc__)
+    def tearDown(self):
+        try:
+            os.remove('file.json')
+        except:
+            pass
 
-    def test_init_docstring(self):
-        """Test that the __init__ method has a docstring"""
-        self.assertIsNotNone(BaseModel.__init__.__doc__)
+    def test_default(self):
+        """ """
+        i = self.value()
+        self.assertEqual(type(i), self.value)
 
-    def test_str_docstring(self):
-        """Test that the __str__ method has a docstring"""
-        self.assertIsNotNone(BaseModel.__str__.__doc__)
+    def test_kwargs(self):
+        """ """
+        i = self.value()
+        copy = i.to_dict()
+        new = BaseModel(**copy)
+        self.assertFalse(new is i)
 
-    def test_save_docstring(self):
-        """Test that the save method has a docstring"""
-        self.assertIsNotNone(BaseModel.save.__doc__)
+    def test_kwargs_int(self):
+        """ """
+        i = self.value()
+        copy = i.to_dict()
+        copy.update({1: 2})
+        with self.assertRaises(TypeError):
+            new = BaseModel(**copy)
 
-    def test_to_dict_docstring(self):
-        """Test that the to_dict method has a docstring"""
-        self.assertIsNotNone(BaseModel.to_dict.__doc__)
-
-    def test_init(self):
-        """Test the __init__ method of the BaseModel class"""
-        my_model = BaseModel()
-        self.assertIsInstance(my_model, BaseModel)
-        self.assertIsInstance(my_model.id, str)
-        self.assertIsInstance(my_model.created_at, datetime)
-        self.assertIsInstance(my_model.updated_at, datetime)
+    def test_save(self):
+        """ Testing save """
+        i = self.value()
+        i.save()
+        key = self.name + "." + i.id
+        with open('file.json', 'r') as f:
+            j = json.load(f)
+            self.assertEqual(j[key], i.to_dict())
 
     def test_str(self):
-        """Test the __str__ method of the BaseModel class"""
-        my_model = BaseModel()
-        expected_output = "[BaseModel] ({}) {}"\
-            .format(my_model.id, my_model.__dict__)
-        self.assertEqual(str(my_model), expected_output)
+        """ """
+        i = self.value()
+        self.assertEqual(str(i), '[{}] ({}) {}'.format(self.name, i.id,
+                         i.__dict__))
 
-    def test_save_updates_updated_at(self):
-        """Test that the save method updates the updated_at attribute"""
-        my_model = BaseModel()
-        old_updated_at = my_model.updated_at
-        sleep(0.1)
-        my_model.save()
-        new_updated_at = my_model.updated_at
-        self.assertNotEqual(old_updated_at, new_updated_at)
+    def test_todict(self):
+        """ """
+        i = self.value()
+        n = i.to_dict()
+        self.assertEqual(i.to_dict(), n)
 
-    def test_to_dict_contains_correct_keys(self):
-        """Self explain"""
-        my_model = BaseModel()
-        my_dict = my_model.to_dict()
-        self.assertIn("id", my_dict)
-        self.assertIn("created_at", my_dict)
-        self.assertIn("updated_at", my_dict)
-        self.assertIn("__class__", my_dict)
+    def test_kwargs_none(self):
+        """ """
+        n = {None: None}
+        with self.assertRaises(TypeError):
+            new = self.value(**n)
 
-    def test_to_dict_contains_correct_values(self):
-        """Self explain"""
-        my_model = BaseModel()
-        my_dict = my_model.to_dict()
-        self.assertEqual(my_dict["id"], my_model.id)
+    def test_kwargs_one(self):
+        """ """
+        n = {'Name': 'test'}
+        with self.assertRaises(KeyError):
+            new = self.value(**n)
+
+    def test_id(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.id), str)
+
+    def test_created_at(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.created_at), datetime.datetime)
+
+    def test_updated_at(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.updated_at), datetime.datetime)
+        n = new.to_dict()
+        new = BaseModel(**n)
+        self.assertFalse(new.created_at == new.updated_at)

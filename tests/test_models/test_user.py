@@ -1,50 +1,34 @@
 #!/usr/bin/python3
-"""Unittest test_user module"""
-
-import unittest
-import pycodestyle
-from models.engine.file_storage import FileStorage
+""" """
+from tests.test_models.test_base_model import test_basemodel
 from models.user import User
 
 
-class TestUser(unittest.TestCase):
-    """Test cases for TestUser class"""
+class test_User(test_basemodel):
+    """ """
 
-    def setUp(self):
-        """Set up test cases"""
-        self.storage = FileStorage()
-        self.storage.reload()
-        self.storage._FileStorage__objects = {}
+    def __init__(self, *args, **kwargs):
+        """ """
+        super().__init__(*args, **kwargs)
+        self.name = "User"
+        self.value = User
 
-    def tearDown(self):
-        """Clean up after test cases"""
-        self.storage._FileStorage__objects = {}
+    def test_first_name(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.first_name), str)
 
-    def test_user(self):
-        """Test the User class"""
-        my_user = User()
-        my_user.first_name = "Khaled"
-        my_user.last_name = "Ibn Al-Walid"
-        my_user.email = "unbeatable@leader.war"
-        my_user.password = "TheSwordOfGod"
-        my_user.save()
+    def test_last_name(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.last_name), str)
 
-        all_objs = self.storage.all()
-        key = f'User.{my_user.id}'
-        self.assertIn(key, all_objs.keys())
+    def test_email(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.email), str)
 
-    def test_pycodestyle(self):
-        """Test that the code follows pycodestyle guidelines"""
-        style = pycodestyle.StyleGuide(quiet=True)
-        result = style.check_files(['models/user.py'])
-        self.assertEqual(result.total_errors, 0,
-                         "Found code style errors (and warnings).")
-
-    def test_module_docstring(self):
-        """Test that the module has a docstring"""
-        import models.user
-        self.assertIsNotNone(models.user.__doc__)
-
-    def test_class_docstring(self):
-        """Test that the class has a docstring"""
-        self.assertIsNotNone(User.__doc__)
+    def test_password(self):
+        """ """
+        new = self.value()
+        self.assertEqual(type(new.password), str)
