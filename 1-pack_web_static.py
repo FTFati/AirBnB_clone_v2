@@ -1,29 +1,25 @@
 #!/usr/bin/python3
-"""Fabfile to generate a .tgz archive from the contents of web_static"""
-
-from fabric.api import local, runs_once
+from fabric import task
 from datetime import datetime
 import os
 
-@runs_once
-def do_pack():
-    """Archives the static files."""
-    if not os.path.isdir("versions"):
-        os.mkdir("versions")
-    d_time = datetime.now()
-    output = "versions/web_static_{}{}{}{}{}{}.tgz".format(
-        d_time.year,
-        d_time.month,
-        d_time.day,
-        d_time.hour,
-        d_time.minute,
-        d_time.second
-    )
+@task
+def do_pack(c):
+    """Generates a .tgz archive from the contents of the web_static folder."""
     try:
-        print("Packing web_static to {}".format(output))
-        local("tar -cvzf {} web_static".format(output))
-        size = os.stat(output).st_size
-        print("web_static packed: {} -> {} Bytes".format(output, size))
-    except Exception:
-        output = None
-    return output
+        # Create the versions folder if it doesn't exist
+        if not os.path.exists("versions"):
+            c.local("mkdir versions")
+
+        # Generate the archive name using the current timestamp
+        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        archive_name = f"web_static_{timestamp}.tgz"
+
+        # Pack the contents of web_static into the archive
+        c.local(f"tar -cvzf versions/{archive_name} web_static")
+
+        # Return the path of the generated archive
+        return f"versions/{archive_name}"
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
