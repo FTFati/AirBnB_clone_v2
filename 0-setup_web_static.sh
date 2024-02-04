@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-<<<<<<< HEAD
 # sets up your web servers for the deployment of web_static
 
 trap 'exit 0' ERR
@@ -51,4 +50,3 @@ ln -fs /data/web_static/releases/test /data/web_static/current
 chown -R ubuntu:ubuntu /data
 sed -i '/^\tserver_name/ a\\tlocation /hbnb_static \{\n\t\talias /data/web_static/current;\n\t\}\n' /etc/nginx/sites-available/default
 service nginx restart
->>>>>>> 45685ab1ba6d378d0d14bbc9cc8f5f8bc20720b4
