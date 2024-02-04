@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+<<<<<<< HEAD
 # sets up your web servers for the deployment of web_static
 
 trap 'exit 0' ERR
@@ -35,3 +36,19 @@ sudo sed -i "/^server {/a \ \tadd_header X-Served-By $HOSTNAME;" $config
 sudo sed -i '/^server {/a \ \n\tlocation \/hbnb_static {alias /data/web_static/current/;index index.html;}' $config
 
 sudo service nginx restart
+=======
+# Sets up a web server for deployment of web_static.
+
+apt-get update -y
+apt-get upgrade -y
+apt-get install nginx -y
+mkdir -p /data/web_static
+mkdir -p /data/web_static/releases
+mkdir -p /data/web_static/shared
+mkdir -p /data/web_static/releases/test
+echo "test deploying web_static" > /data/web_static/releases/test/index.html
+ln -fs /data/web_static/releases/test /data/web_static/current
+chown -R ubuntu:ubuntu /data
+sed -i '/^\tserver_name/ a\\tlocation /hbnb_static \{\n\t\talias /data/web_static/current;\n\t\}\n' /etc/nginx/sites-available/default
+service nginx restart
+>>>>>>> 45685ab1ba6d378d0d14bbc9cc8f5f8bc20720b4
