@@ -6,6 +6,7 @@ from models.city import City
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 import os
+STORAGE_TYPE = os.environ.get('HBNB_TYPE_STORAGE')
 
 
 class State(BaseModel, Base):
@@ -23,7 +24,18 @@ class State(BaseModel, Base):
 
         @property
         def cities(self):
-            """Getter method to return the list of City objects."""
-            from models import storage
-            file_cities = storage.all(storage.classes['City']).value()
-            return [city for city in file_cities if city.state_id == self.id]
+                if STORAGE_TYPE != 'db':
+                    var = models.storage.all()
+                    lista = []
+                    result = []
+                    for key in var:
+                        city = key.replace('.', ' ')
+                        city = shlex.split(city)
+                        if city[0] == 'City':
+                            lista.append(var[key])
+                    for elem in lista:
+                        if elem.state_id == self.id:
+                            result.append(elem)
+                    return result
+                else:
+                    return [city for city in self.cities]
