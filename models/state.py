@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 """ State Module for HBNB project """
-
+import models
 from models.base_model import BaseModel, Base
+from models.city import City
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
-import os
+from os import getenv
 
 
 class State(BaseModel, Base):
@@ -22,6 +23,7 @@ class State(BaseModel, Base):
 
         @property
         def cities(self):
+            """Getter method to return the list of City objects."""
             from models import storage
-            file_cities = storage.all(storage.classes['City']).values()
+            file_cities = storage.all(storage.classes['City']).value()
             return [city for city in file_cities if city.state_id == self.id]
