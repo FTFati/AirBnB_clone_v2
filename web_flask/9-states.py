@@ -1,36 +1,34 @@
 #!/usr/bin/python3
-"""9-Starts a Flask web application."""
-from flask import Flask, render_template
+""" 9-Starts a Flask web application. """
+
 from models import storage
+from flask import Flask, render_template
 
 app = Flask(__name__)
-app.url_map.strict_slashes = False
 
 
-@app.route('/states')
+@app.route("/states", strict_slashes=False)
 def states():
-    """List states"""
-    states = storage.all("State").values()
-    states = sorted(states, key=lambda state: state.name)
-    return render_template('9-states.html', states=states)
+    """Displays a HTML page with the states"""
+    states = storage.all("State")
+    return render_template("9-states.html", state=states)
 
 
-@app.route('/states/<id>')
+@app.route("/states/<id>", strict_slashes=False)
 def states_id(id):
-    """Get state by id"""
-    states = storage.all("State").values()
-    for state in states:
+    """Displays a HTML page with the state's id"""
+    states = storage.all("State")
+    for state in states.values():
         if state.id == id:
-            state.cities = sorted(state.cities, key=lambda city: city.name)
-            return render_template('9-states.html', state=state)
-    return render_template('9-states.html')
+            return render_template("9-states.html", state=state)
+    return render_template("9-states.html")
 
 
 @app.teardown_appcontext
 def teardown_db(exception):
-    """Close"""
+    """Closes the database session"""
     storage.close()
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host="0.0.0.0", port=5000)
