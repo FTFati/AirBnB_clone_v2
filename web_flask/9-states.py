@@ -1,34 +1,33 @@
 #!/usr/bin/python3
-""" 9-Starts a Flask web application. """
-
-from models import storage
+"""9-Start a Flask web application."""
 from flask import Flask, render_template
-
+from models import storage
 app = Flask(__name__)
 
 
 @app.route("/states", strict_slashes=False)
 def states():
-    """Displays a HTML page with the states"""
-    states = storage.all("State")
-    return render_template("9-states.html", state=states)
+    """states returned"""
+    return render_template('9-states.html\
+', states=storage.all("State"), state=None)
 
 
 @app.route("/states/<id>", strict_slashes=False)
-def states_id(id):
-    """Displays a HTML page with the state's id"""
+def id_state(id):
+    """states returned"""
     states = storage.all("State")
-    for state in states.values():
-        if state.id == id:
-            return render_template("9-states.html", state=state)
-    return render_template("9-states.html")
+    # if "State.{}".format(id) not in states:
+    #     return render_template('9-states.html')
+    state = storage.all("State").get("State.{}".format(id))
+    return render_template('9-states.html\
+', state=state, states=None)
 
 
 @app.teardown_appcontext
-def teardown_db(exception):
-    """Closes the database session"""
+def reset(error):
+    """reload data"""
     storage.close()
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host='0.0.0.0', port=5000)
