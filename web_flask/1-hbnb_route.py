@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 #!usr/bin/python3
 """ starts a Flask web application """
-=======
-#!/usr/bin/python3
-""" 1-Starts a Flask web application """
->>>>>>> be560ac65a05b89aef2660075a1bb26e43e9c6a2
 
 from flask import Flask
 app = Flask(__name__)
