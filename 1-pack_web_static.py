@@ -18,7 +18,6 @@ def do_pack():
     if local("{} && tar -cvzf {} web_static".format(mkdir, path)).succeeded:
         return path
     return None
-=======
 """
     pack all content within web_static
 """
@@ -43,4 +42,3 @@ def do_pack():
     result = local(cmd)
     if not result.failed:
         return name
->>>>>>> 45685ab1ba6d378d0d14bbc9cc8f5f8bc20720b4
